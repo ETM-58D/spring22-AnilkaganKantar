@@ -18,4 +18,12 @@ Homework 3 part 2 [R](https://github.com/ETM-58D/spring22-AnilkaganKantar/blob/g
 
 Homework 3 part 2 [Jupyter](https://github.com/ETM-58D/spring22-AnilkaganKantar/blob/gh-pages/hw3_part2/hw3_2.ipynb) file
 
+### Homework 4
+
+Homework 4 [html](https://github.com/ETM-58D/spring22-AnilkaganKantar/blob/gh-pages/hw4/hw4.html) file
+
+Homework 4 [R](https://github.com/ETM-58D/spring22-AnilkaganKantar/blob/gh-pages/hw4/HW4.R) file
+
+Homework 4 [Jupyter](https://github.com/ETM-58D/spring22-AnilkaganKantar/blob/gh-pages/hw4/hw4.ipynb) file
+
 [Link](https://moodle.boun.edu.tr)
