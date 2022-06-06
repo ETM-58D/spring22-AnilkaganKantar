@@ -19,8 +19,14 @@ library("lubridate")
 
 set.seed(123)
 
+#Dataset 1 - Try to predict chronic kidney disease
+
+#load data
+
 kidneydf <- readARFF("C:/ETM58D/final/db3_kidney/Chronic_Kidney_Disease/chronic_kidney_disease_full.arff")
 kidneydfmod <- kidneydf
+
+#change strings to numeric for easier usage, set prediction target as factor as it is a classification problem
 
 kidneydfmod <- data.frame(lapply(kidneydf,function(x){gsub("abnormal","1",x)} ))
 kidneydfmod <- data.frame(lapply(kidneydfmod,function(x){gsub("normal","0",x)} ))
@@ -35,11 +41,15 @@ kidneydfmod <- data.frame(lapply(kidneydfmod,function(x){gsub("yes","1",x)} ))
 kidneydfmod[] <- lapply(kidneydfmod, function(x) as.numeric(as.character(x)))
 kidneydfmod$class <- as.factor(as.character(kidneydfmod$class))
 
+#fill the NA data points with column medians for numeric and mode(most common data) for factor, which is only classification column
+
 imp1 <- impute(kidneydfmod, classes = list(numeric=imputeMedian(), factor=imputeMode()))
 kidneydfmod <- imp1$data
 
+#chech the data set
 str(kidneydfmod)
 
+#create train and test sets
 kidneytrain <- kidneydfmod[1:320,]
 kidneytest <- kidneydfmod[321:400,]
 
@@ -57,7 +67,7 @@ tableaccuracy <- table(kidneytest$class,kidneypredict)
 
 accuracytest<- sum(diag(tableaccuracy))/sum(tableaccuracy)
 accuracytest
-
+#accuracy is .0125, already a very good level. Try to prune the decision tree. Although original decision tree is already only 2 levels
 #prune the decision tree
 
 printcp(dtree)
@@ -67,6 +77,8 @@ p1 <- dtree$cptable[which.min(dtree$cptable[, "xerror"]), "CP"]
 pdtree <- prune(dtree, cp=p1)
 
 fancyRpartPlot(pdtree)
+
+#pruning created no difference.
 
 #Start random forest
 
@@ -89,6 +101,8 @@ rf1accu <- table(kidneytest$class,rf1pred)
 
 rf1test <- sum(diag(rf1accu))/sum(rf1accu)
 rf1test
+#Random Forest gave .9875 accuracy, very high precision.
+
 
 #DATASET2
 
@@ -105,7 +119,7 @@ data2 <- data.frame(lapply(data2,function(x){gsub("Male","0",x)} ))
 data2 <- data.frame(lapply(data2,function(x){gsub("Cad","1",x)} ))
 data2 <- data.frame(lapply(data2,function(x){gsub("Normal","0",x)} ))
 
-#Cahnge all No to 0 and yeses to 1
+#Change all No to 0 and yeses to 1
 data2 <- data.frame(lapply(data2,function(x){gsub("N","0",x)} ))
 data2 <- data.frame(lapply(data2,function(x){gsub("Y","1",x)} ))
 
@@ -122,6 +136,7 @@ data2 <- data.frame(lapply(data2,function(x){gsub("RBBB","2",x)} ))
 data2[] <- lapply(data2, function(x) as.numeric(as.character(x)))
 data2$VHD <- as.factor(as.character(data2$VHD))
 
+#create train and test sets
 data2train <- data2[1:260,]
 data2test <- data2[262:303,]
 
@@ -139,6 +154,8 @@ case2tabacc
 case2acctest <- sum(diag(case2tabacc))/sum(case2tabacc) 
 case2acctest
 
+#accuracy is .4761, not very good. 
+
 #prune the decision tree
 
 printcp(dtree_2)
@@ -148,6 +165,7 @@ p2 <- dtree_2$cptable[which.min(dtree$cptable[, "xerror"]), "CP"]
 pdtree_2 <- prune(dtree_2, cp=p2)
 
 fancyRpartPlot(pdtree_2)
+
 
 #train and test random forest
 
@@ -173,15 +191,18 @@ rf2accu <- table(data2test$VHD,rf2pred)
 rf2test <- sum(diag(rf2accu))/sum(rf2accu)
 rf2test
 
+#Random Forest delivers better accuracy with .5476
 
 
 #DATASET 3
 
-#predict grades based on student and family questionerres
+#predict grades(G3) based on student and family questionerres
 
 data3 <- read.csv("C:/ETM58D/final/studentgrade/student-mat.csv", sep = ";")
 
 str(data3)
+
+#change strings to numeric for easier usage, set prediction target as factor as it is a classification problem
 
 data3 <- data.frame(lapply(data3,function(x){gsub("GP","0",x)} ))
 data3 <- data.frame(lapply(data3,function(x){gsub("MS","1",x)} ))
@@ -209,6 +230,7 @@ data3[] <- lapply(data3, function(x) as.integer(as.character(x)))
 data3$G3 <- as.factor(as.character(data3$G3))
 str(data3)
 
+#create test and train sets
 data3train <- data3[1:320,]
 data3test <- data3[321:395,]
 
@@ -227,6 +249,7 @@ case3tabacc
 case3acctest <- sum(diag(case3tabacc))/sum(case3tabacc) 
 case3acctest
 
+#.48 accuracy with decision tree
 #prune the decision tree
 
 printcp(dtree_3)
@@ -236,6 +259,16 @@ p3 <- dtree_3$cptable[which.min(dtree$cptable[, "xerror"]), "CP"]
 pdtree_3 <- prune(dtree_3, cp=p3)
 
 fancyRpartPlot(pdtree_3)
+
+case3pre <- predict(pdtree_3, data3test, type = "class")
+
+case3tabacc <- table(data3test$G3,case3pre)
+case3tabacc
+
+case3acctest <- sum(diag(case3tabacc))/sum(case3tabacc) 
+case3acctest
+
+#pruning reduces accuracy, go with original tree
 
 #create randomforest
 
@@ -261,3 +294,4 @@ rf3accu <- table(data3test$G3,rf3pred)
 rf3test <- sum(diag(rf3accu))/sum(rf3accu)
 rf3test
 
+#Random Forest achieves .5067 accuracy, better than decision tree
