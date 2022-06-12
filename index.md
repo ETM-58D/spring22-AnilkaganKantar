@@ -29,6 +29,10 @@ Homework 4 [R](hw4/HW4.R) file
 
 Homework 4 [Jupyter](hw4/hw4.ipynb) file
 
+### Final
+
+Final [R](final/ETM58Dfinal.R) file
+
 ### Project with Pınar Köksal
 
 Project [html](Project/Proje.html) file
