@@ -32,6 +32,8 @@ Homework 4 [Jupyter](hw4/hw4.ipynb) file
 ### Project with Pınar Köksal
 
 Project [html](Project/Proje.html) file
+
 Project [R](Project/proje12062022.R) file
+
 Project [Jupyter](Project/Proje.ipynb) file
 
